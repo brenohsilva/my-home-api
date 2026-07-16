@@ -1,0 +1,235 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ConstructionStage {
+  PLANNING
+  FOUNDATION
+  STRUCTURE
+  MASONRY
+  FINISHING
+  INSPECTION
+  DELIVERED
+}
+
+enum FinancingSystem {
+  SAC
+  PRICE
+  SACRE
+  OTHER
+}
+
+enum PaymentType {
+  SIGNAL
+  DOWN_PAYMENT
+  MONTHLY_INSTALLMENT
+  INTERMEDIATE_INSTALLMENT
+  ANNUAL_INSTALLMENT
+  KEYS
+  CONSTRUCTION_FEE
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELED
+}
+
+enum ExpenseCategory {
+  DOCUMENTATION
+  ITBI
+  REGISTRATION
+  NOTARY
+  MOVING
+  RENOVATION
+  FURNITURE
+  APPLIANCES
+  CONDOMINIUM
+  IPTU
+  OTHER
+}
+
+enum AdjustmentIndexType {
+  INCC
+  IPCA
+  IGPM
+  TR
+  OTHER
+}
+
+model User {
+  id            String         @id @default(uuid()) @db.Uuid
+  name          String
+  email         String         @unique
+  passwordHash  String         @map("password_hash")
+  googleAuthId  String?        @unique @map("google_auth_id")
+  properties    Property[]
+  refreshTokens RefreshToken[]
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model Property {
+  id                   String                 @id @default(uuid()) @db.Uuid
+  userId               String                 @map("user_id") @db.Uuid
+  name                 String
+  builderName          String                 @map("builder_name")
+  city                 String
+  state                String                 @db.VarChar(2)
+  street               String
+  purchaseDate         DateTime               @map("purchase_date") @db.Date
+  builderSignedDate    DateTime?              @map("builder_signed_date") @db.Date
+  bankSignedDate       DateTime?              @map("bank_signed_date") @db.Date
+  expectedKeyDate      DateTime?              @map("expected_key_date") @db.Date
+  assessedValue        Decimal                @map("assessed_value") @db.Decimal(14, 2)
+  purchaseValue        Decimal                @map("purchase_value") @db.Decimal(14, 2)
+  currentStage         ConstructionStage?     @map("current_stage")
+  progressPercent      Decimal?               @map("progress_percent") @db.Decimal(5, 2)
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+  user                 User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  financing            Financing?
+  payments             Payment[]
+  expenses             Expense[]
+  constructionProgress ConstructionProgress[]
+  constructionFees     ConstructionFee[]
+  adjustmentIndexes    AdjustmentIndex[]
+
+  @@index([userId])
+  @@index([userId, builderName])
+  @@index([userId, city])
+  @@index([userId, state])
+  @@index([userId, street])
+  @@index([userId, purchaseDate])
+  @@index([userId, createdAt])
+  @@map("properties")
+}
+
+model Financing {
+  id                String           @id @default(uuid()) @db.Uuid
+  propertyId        String           @unique @map("property_id") @db.Uuid
+  property          Property         @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  bankName          String?          @map("bank_name")
+  financedAmount    Decimal?         @map("financed_amount") @db.Decimal(12, 2)
+  installmentCount  Int?             @map("installment_count")
+  interestRateYear  Decimal?         @map("interest_rate_year") @db.Decimal(5, 2)
+  interestRateMonth Decimal?         @map("interest_rate_month") @db.Decimal(5, 2)
+  system            FinancingSystem?
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+
+  @@map("financings")
+}
+
+model Payment {
+  id             String        @id @default(uuid()) @db.Uuid
+  propertyId     String        @map("property_id") @db.Uuid
+  property       Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  description    String
+  type           PaymentType
+  status         PaymentStatus @default(PENDING)
+  dueDate        DateTime      @map("due_date")
+  paidDate       DateTime?     @map("paid_date")
+  expectedAmount Decimal       @map("expected_amount") @db.Decimal(12, 2)
+  paidAmount     Decimal?      @map("paid_amount") @db.Decimal(12, 2)
+  notes          String?
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  @@index([propertyId])
+  @@index([propertyId, dueDate])
+  @@map("payments")
+}
+
+model Expense {
+  id             String          @id @default(uuid()) @db.Uuid
+  propertyId     String          @map("property_id") @db.Uuid
+  property       Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  description    String
+  category       ExpenseCategory
+  status         PaymentStatus   @default(PENDING)
+  dueDate        DateTime?       @map("due_date")
+  paidDate       DateTime?       @map("paid_date")
+  expectedAmount Decimal         @map("expected_amount") @db.Decimal(12, 2)
+  paidAmount     Decimal?        @map("paid_amount") @db.Decimal(12, 2)
+  notes          String?
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  @@index([propertyId])
+  @@index([propertyId, dueDate])
+  @@map("expenses")
+}
+
+model ConstructionProgress {
+  id               String             @id @default(uuid()) @db.Uuid
+  propertyId       String             @map("property_id") @db.Uuid
+  property         Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  referenceMonth   DateTime           @map("reference_month")
+  stage            ConstructionStage?
+  progressPercent  Decimal            @map("progress_percent") @db.Decimal(5, 2)
+  scheduledPercent Decimal            @map("scheduled_percent") @db.Decimal(5, 2)
+  notes            String?
+  createdAt        DateTime           @default(now()) @map("created_at")
+
+  @@index([propertyId])
+  @@index([propertyId, referenceMonth])
+  @@map("construction_progress")
+}
+
+model ConstructionFee {
+  id                 String        @id @default(uuid()) @db.Uuid
+  propertyId         String        @map("property_id") @db.Uuid
+  property           Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  referenceMonth     DateTime      @map("reference_month")
+  percentageReleased Decimal?      @map("percentage_released") @db.Decimal(5, 2)
+  amount             Decimal       @db.Decimal(12, 2)
+  status             PaymentStatus @default(PENDING)
+  paidDate           DateTime?     @map("paid_date")
+  notes              String?
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  @@index([propertyId])
+  @@index([propertyId, referenceMonth])
+  @@map("construction_fees")
+}
+
+model AdjustmentIndex {
+  id             String              @id @default(uuid()) @db.Uuid
+  propertyId     String              @map("property_id") @db.Uuid
+  property       Property            @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  referenceMonth DateTime            @map("reference_month")
+  type           AdjustmentIndexType
+  percentage     Decimal             @db.Decimal(6, 4)
+  amountImpact   Decimal?            @map("amount_impact") @db.Decimal(12, 2)
+  createdAt      DateTime            @default(now()) @map("created_at")
+
+  @@unique([propertyId, type, referenceMonth])
+  @@index([propertyId])
+  @@index([propertyId, referenceMonth])
+  @@map("adjustment_indexes")
+}
