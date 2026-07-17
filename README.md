@@ -146,6 +146,20 @@ GET /properties?page=1&limit=20&city=Recife&sortBy=purchaseDate&order=desc
 
 Todas as consultas incluem o ID do usuário autenticado. Um imóvel de outro usuário responde como não encontrado, sem revelar sua existência. Valores monetários e percentuais são enviados como strings decimais, por exemplo `"420000.00"`, para preservar precisão.
 
+## Financiamento
+
+Cada imóvel pode possuir um único financiamento. Todas as rotas exigem JWT e
+validam se o imóvel pertence ao usuário autenticado:
+
+- `POST /properties/:propertyId/financing`
+- `GET /properties/:propertyId/financing`
+- `PATCH /properties/:propertyId/financing`
+- `DELETE /properties/:propertyId/financing`
+
+O cadastro aceita banco, valor financiado, número de parcelas, taxas anual e
+mensal e o sistema de amortização (`SAC`, `PRICE`, `SACRE` ou `OTHER`). Um novo
+cadastro para um imóvel que já possui financiamento responde com HTTP 409.
+
 ## Swagger
 
 Com a aplicação em execução, acesse:

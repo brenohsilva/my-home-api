@@ -136,7 +136,7 @@ model Financing {
   financedAmount    Decimal?         @map("financed_amount") @db.Decimal(12, 2)
   installmentCount  Int?             @map("installment_count")
   interestRateYear  Decimal?         @map("interest_rate_year") @db.Decimal(5, 2)
-  interestRateMonth Decimal?         @map("interest_rate_month") @db.Decimal(5, 2)
+  interestRateMonth Decimal?         @map("interest_rate_month") @db.Decimal(6, 3)
   system            FinancingSystem?
   createdAt         DateTime         @default(now()) @map("created_at")
   updatedAt         DateTime         @updatedAt @map("updated_at")
