@@ -224,6 +224,24 @@ sincronizam transacionalmente `currentStage` e `progressPercent` do imóvel com
 o registro mais recente. A comparação é retornada em ordem cronológica e a
 rota `latest` inclui a diferença entre o percentual realizado e o previsto.
 
+## Taxa de obra
+
+As cobranças mensais durante a construção estão disponíveis nas rotas:
+
+- `POST /properties/:propertyId/construction-fees`
+- `GET /properties/:propertyId/construction-fees`
+- `GET /properties/:propertyId/construction-fees/summary`
+- `GET /properties/:propertyId/construction-fees/evolution`
+- `GET /properties/:propertyId/construction-fees/:constructionFeeId`
+- `PATCH /properties/:propertyId/construction-fees/:constructionFeeId`
+- `PATCH /properties/:propertyId/construction-fees/:constructionFeeId/pay`
+- `DELETE /properties/:propertyId/construction-fees/:constructionFeeId`
+
+`referenceMonth` deve usar o primeiro dia do mês. O resumo exclui cobranças
+canceladas e apresenta totais pagos e pendentes, média, maior e último valor,
+além do crescimento percentual entre os dois meses mais recentes. A evolução
+é retornada em ordem cronológica para uso em gráficos.
+
 ## Health check
 
 O endpoint público `GET /health` verifica a disponibilidade da API e executa

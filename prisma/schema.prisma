@@ -219,6 +219,7 @@ model ConstructionFee {
 
   @@index([propertyId])
   @@index([propertyId, referenceMonth])
+  @@index([propertyId, status, referenceMonth])
   @@map("construction_fees")
 }
 
