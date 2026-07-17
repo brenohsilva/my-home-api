@@ -207,6 +207,23 @@ A listagem aceita `page`, `limit`, `category`, `status`, `startDate` e
 pagos e pendentes, além do agrupamento por categoria. Ao quitar uma despesa,
 `paidDate` e `paidAmount` são obrigatórios e o status passa para `PAID`.
 
+## Evolução da obra
+
+O histórico mensal da construção está disponível nas rotas protegidas:
+
+- `POST /properties/:propertyId/construction-progress`
+- `GET /properties/:propertyId/construction-progress`
+- `GET /properties/:propertyId/construction-progress/latest`
+- `GET /properties/:propertyId/construction-progress/comparison`
+- `GET /properties/:propertyId/construction-progress/:progressId`
+- `PATCH /properties/:propertyId/construction-progress/:progressId`
+- `DELETE /properties/:propertyId/construction-progress/:progressId`
+
+`referenceMonth` deve usar o primeiro dia do mês. Alterações no histórico
+sincronizam transacionalmente `currentStage` e `progressPercent` do imóvel com
+o registro mais recente. A comparação é retornada em ordem cronológica e a
+rota `latest` inclui a diferença entre o percentual realizado e o previsto.
+
 ## Health check
 
 O endpoint público `GET /health` verifica a disponibilidade da API e executa
