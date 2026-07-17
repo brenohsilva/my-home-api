@@ -189,6 +189,24 @@ parcelas intermediárias exige o tipo `INTERMEDIATE_INSTALLMENT` e frequência
 `YEARLY`. Ao quitar, `paidDate` e `paidAmount` são obrigatórios. Ao reabrir, os
 dois campos são removidos e o status volta para `PENDING`.
 
+## Despesas
+
+Despesas representam custos adicionais como ITBI, cartório, mudança, reforma,
+móveis e eletrodomésticos. Todas as rotas exigem JWT e ownership do imóvel:
+
+- `POST /properties/:propertyId/expenses`
+- `GET /properties/:propertyId/expenses`
+- `GET /properties/:propertyId/expenses/summary`
+- `GET /properties/:propertyId/expenses/:expenseId`
+- `PATCH /properties/:propertyId/expenses/:expenseId`
+- `PATCH /properties/:propertyId/expenses/:expenseId/pay`
+- `DELETE /properties/:propertyId/expenses/:expenseId`
+
+A listagem aceita `page`, `limit`, `category`, `status`, `startDate` e
+`endDate`. O resumo exclui despesas canceladas e retorna os valores esperados,
+pagos e pendentes, além do agrupamento por categoria. Ao quitar uma despesa,
+`paidDate` e `paidAmount` são obrigatórios e o status passa para `PAID`.
+
 ## Swagger
 
 Com a aplicação em execução, acesse:

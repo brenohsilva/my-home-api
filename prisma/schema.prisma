@@ -183,6 +183,8 @@ model Expense {
 
   @@index([propertyId])
   @@index([propertyId, dueDate])
+  @@index([propertyId, status, dueDate])
+  @@index([propertyId, category])
   @@map("expenses")
 }
 
