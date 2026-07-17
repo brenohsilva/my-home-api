@@ -242,6 +242,22 @@ canceladas e apresenta totais pagos e pendentes, média, maior e último valor,
 além do crescimento percentual entre os dois meses mais recentes. A evolução
 é retornada em ordem cronológica para uso em gráficos.
 
+## Índices de reajuste
+
+Os índices aplicados ao contrato ou às parcelas estão disponíveis nas rotas:
+
+- `POST /properties/:propertyId/adjustment-indexes`
+- `GET /properties/:propertyId/adjustment-indexes`
+- `GET /properties/:propertyId/adjustment-indexes/summary`
+- `GET /properties/:propertyId/adjustment-indexes/:adjustmentIndexId`
+- `PATCH /properties/:propertyId/adjustment-indexes/:adjustmentIndexId`
+- `DELETE /properties/:propertyId/adjustment-indexes/:adjustmentIndexId`
+
+O percentual segue a convenção `0.48 = 0,48%` e aceita até quatro casas
+decimais. O resumo calcula o percentual acumulado de forma composta e permite
+filtrar por tipo. O valor estimado ajustado considera o valor de compra inicial
+somado aos impactos monetários registrados.
+
 ## Health check
 
 O endpoint público `GET /health` verifica a disponibilidade da API e executa
