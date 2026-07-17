@@ -161,6 +161,8 @@ model Payment {
 
   @@index([propertyId])
   @@index([propertyId, dueDate])
+  @@index([propertyId, status, dueDate])
+  @@index([propertyId, type])
   @@map("payments")
 }
 

@@ -160,6 +160,35 @@ O cadastro aceita banco, valor financiado, número de parcelas, taxas anual e
 mensal e o sistema de amortização (`SAC`, `PRICE`, `SACRE` ou `OTHER`). Um novo
 cadastro para um imóvel que já possui financiamento responde com HTTP 409.
 
+## Pagamentos
+
+Pagamentos representam sinal, entrada, parcelas mensais, intermediárias,
+anuais e parcela das chaves. Todas as rotas exigem JWT e ownership do imóvel:
+
+- `POST /properties/:propertyId/payments`
+- `POST /properties/:propertyId/payments/generate-installments`
+- `POST /properties/:propertyId/payments/generate-intermediate-installments`
+- `GET /properties/:propertyId/payments`
+- `GET /properties/:propertyId/payments/upcoming`
+- `GET /properties/:propertyId/payments/overdue`
+- `GET /properties/:propertyId/payments/summary`
+- `GET /properties/:propertyId/payments/:paymentId`
+- `PATCH /properties/:propertyId/payments/:paymentId`
+- `PATCH /properties/:propertyId/payments/:paymentId/pay`
+- `PATCH /properties/:propertyId/payments/:paymentId/reopen`
+- `DELETE /properties/:propertyId/payments/:paymentId`
+- `DELETE /properties/:propertyId/payments` com `paymentIds` no body
+
+A listagem aceita `page`, `limit`, `status`, `type`, `startDate`, `endDate`,
+`sortBy` e `sortOrder`. O status `OVERDUE` é calculado consultando pagamentos
+pendentes com vencimento anterior ao dia atual; ele não é gravado durante a
+operação normal da API.
+
+A geração aceita frequências `MONTHLY` e `YEARLY` e é transacional. A rota de
+parcelas intermediárias exige o tipo `INTERMEDIATE_INSTALLMENT` e frequência
+`YEARLY`. Ao quitar, `paidDate` e `paidAmount` são obrigatórios. Ao reabrir, os
+dois campos são removidos e o status volta para `PENDING`.
+
 ## Swagger
 
 Com a aplicação em execução, acesse:
