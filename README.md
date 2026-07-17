@@ -258,6 +258,25 @@ decimais. O resumo calcula o percentual acumulado de forma composta e permite
 filtrar por tipo. O valor estimado ajustado considera o valor de compra inicial
 somado aos impactos monetários registrados.
 
+## Dashboard
+
+O dashboard consolida os dados do imóvel sem utilizar uma tabela própria:
+
+- `GET /properties/:propertyId/dashboard`
+- `GET /properties/:propertyId/dashboard/financial-summary`
+- `GET /properties/:propertyId/dashboard/financial-calendar`
+- `GET /properties/:propertyId/dashboard/key-delivery-forecast`
+
+O resumo financeiro agrega pagamentos, despesas, taxas de obra e impactos de
+reajuste, desconsiderando registros cancelados. O calendário aceita os filtros
+opcionais `startDate` e `endDate`; para taxas de obra, utiliza `referenceMonth`,
+pois a entidade não possui uma data de vencimento.
+
+A previsão até a entrega das chaves usa a média dos três últimos registros de
+taxa de obra multiplicada pela quantidade de meses restantes. A resposta inclui
+`isEstimate`, o método utilizado, a média mensal e uma mensagem informando que
+o valor é apenas uma estimativa e pode variar.
+
 ## Health check
 
 O endpoint público `GET /health` verifica a disponibilidade da API e executa
