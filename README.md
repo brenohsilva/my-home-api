@@ -207,6 +207,13 @@ A listagem aceita `page`, `limit`, `category`, `status`, `startDate` e
 pagos e pendentes, além do agrupamento por categoria. Ao quitar uma despesa,
 `paidDate` e `paidAmount` são obrigatórios e o status passa para `PAID`.
 
+## Health check
+
+O endpoint público `GET /health` verifica a disponibilidade da API e executa
+uma consulta simples no PostgreSQL. Ele retorna HTTP 200 quando ambos estão
+disponíveis e HTTP 503 quando o banco não responde. A imagem Docker utiliza
+essa mesma rota no `HEALTHCHECK`.
+
 ## Swagger
 
 Com a aplicação em execução, acesse:

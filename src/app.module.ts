@@ -7,6 +7,7 @@ import { ConstructionFeesModule } from './modules/construction-fees/construction
 import { ConstructionProgressModule } from './modules/construction-progress/construction-progress.module';
 import { ExpensesModule } from './modules/expenses/expenses.module';
 import { FinancingModule } from './modules/financing/financing.module';
+import { HealthModule } from './modules/health/health.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PropertiesModule } from './modules/properties/properties.module';
@@ -24,6 +25,7 @@ import { UsersModule } from './modules/users/users.module';
     UsersModule,
     PropertiesModule,
     FinancingModule,
+    HealthModule,
     PaymentsModule,
     ExpensesModule,
     ConstructionProgressModule,
