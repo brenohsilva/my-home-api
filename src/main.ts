@@ -17,8 +17,15 @@ async function bootstrap(): Promise<void> {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableShutdownHooks();
 
+  const config = app.get(ConfigService);
+  const allowedOrigins = config
+    .get<string>('CORS_ORIGIN', 'https://my-home-app-eta.vercel.app')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
   app.enableCors({
-    origin: true,
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
@@ -35,7 +42,6 @@ async function bootstrap(): Promise<void> {
     SwaggerModule.createDocument(app, swaggerConfig),
   );
 
-  const config = app.get(ConfigService);
   await app.listen(config.get<number>('PORT', 3000), '0.0.0.0');
 }
 
