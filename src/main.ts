@@ -17,6 +17,12 @@ async function bootstrap(): Promise<void> {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableShutdownHooks();
 
+  app.enableCors({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Minha Morada API')
     .setDescription('API para acompanhamento de imóveis comprados na planta.')
